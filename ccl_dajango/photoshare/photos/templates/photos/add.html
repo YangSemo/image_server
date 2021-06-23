@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Add Photo</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body class="m-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <!--go back 버튼 클릭 시 gallery html로 이등-->
+            <div class="col-md-6">
+                <a href="{% url 'gallery' %}" class="btn btn-dark my-3">Go Back</a>
+                <!--  card 형식으로 post 전송 -->
+                <div class="card">
+                    <form method='POST' action="" enctype="multipart/form-data">
+                        <!-- csrf 공격을 막아주는 역할   -->
+                        {% csrf_token %}
+
+                        <!-- 설명 작성 -->
+                        <div class="form-group m-3">
+                            <label>Description</label>
+                            <input required name="description" type="text" placeholder="Enter a description"
+                                class="form-control">
+                        </div>
+
+                        <!-- 카테고리 선택 -->
+                        <div class="form-group m-3">
+                            <label>Select a category</label>
+                            <select required name="category" class="form-control">
+                                <option value='none'>Select a category...</option>
+                                <!-- 카테고리 불러오기 -->
+                                {% for category in categories %}
+                                <option value='{{category.id}}'>{{category.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- 카테고리 생성 -->
+                        <div class="form-group m-3">
+                            <label>Create a new category</label>
+                            <input name="category_new" type="text" placeholder="Create a new category"
+                                class="form-control">
+                        </div>
+
+                        <!-- 여러 이미지 업로드 -->
+                        <div class="form-group m-3">
+                            <label>Upload image</label>
+                            <input required name="image" type="file" multiple class="form-control-file">
+                        </div>
+
+                        <button type='submit' class="btn btn-primary m-3">Submit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
