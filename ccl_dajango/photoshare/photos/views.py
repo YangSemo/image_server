@@ -93,13 +93,19 @@ def registerUser(request):
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        print('post')
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
+            print('user: ', user)
 
             if user is not None:
                 login(request,user)
                 return redirect('gallery')
+
+        else:
+            print('비밀번호를 다시 설정해주세요')
+
 
     context = {'form': form, 'page': page}
     return render(request, 'photos/login_register.html', context)
