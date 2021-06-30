@@ -1,8 +1,12 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .models import Category, Photo
 from .form import CustomUserCreationForm
+
+from thumb_gen.worker import Generator # 영상 썸네일
 # Create your views here.
 
 # 메인 페이지 view
@@ -18,7 +22,15 @@ def gallery(request):
 
     # 카테고리 DB 전체 내용 가져오기
     categories = Category.objects.all()
-    
+
+    # folder = 'C:/Users/SAMSUNG/CCLab_git/image_server/ccl_dajango/photoshare/static'
+    # for photo in photos:
+    #     if photo.image.url.endswith('.mp4') or photo.image.url.endswith('.mkv'):
+    #         app = Generator(os.path.join(folder, photo.image.url), output_path=folder, custom_text=False, font_size=25)
+    #         app.run()
+    for photo in photos:
+        print("photo: ", photo.image.url)
+
     # 딕셔너리 형식으로 카테고리, 포토 변환
     context = {'categories': categories, 'photos': photos}
     return render(request, 'photos/gallery.html', context)
@@ -27,7 +39,10 @@ def gallery(request):
 @login_required(login_url='login')
 def viewPhoto(request, pk):
     photo = Photo.objects.get(id=pk)
-    return render(request, 'photos/photo.html', {'photo':photo})
+    print("구분: ", photo.image.url[photo.image.url.find(".")+1:])
+    gubun = photo.image.url[photo.image.url.find(".")+1:]
+    context = {'photo':photo, 'gubun': gubun}
+    return render(request, 'photos/photo.html', context)
 
 # 이미지 추가 view
 @login_required(login_url='login')
