@@ -26,36 +26,57 @@
                         <!-- csrf 공격을 막아주는 역할   -->
                         {% csrf_token %}
 
-                        <!-- 설명 작성 -->
+                        <!-- 방문장소 선택 -->
                         <div class="form-group m-3">
-                            <label>Description</label>
-                            <input required name="description" type="text" placeholder="Enter a description"
-                                class="form-control">
-                        </div>
-
-                        <!-- 카테고리 선택 -->
-                        <div class="form-group m-3">
-                            <label>Select a category</label>
-                            <select required name="category" class="form-control">
-                                <option value='none'>Select a category...</option>
-                                <!-- 카테고리 불러오기 -->
-                                {% for category in categories %}
-                                <option value='{{category.id}}'>{{category.name}}</option>
+                            <label>방문 장소</label>
+                            <select required name="place" class="form-control">
+                                <option value='none'>장소를 선택해주세요</option>
+                                <!-- 방문 장소 불러오기 -->
+                                {% for place in places %}
+                                <option value='{{place.id}}'>{{place.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
-                        <!-- 카테고리 생성 -->
+
+                        <!-- 방문 장소 상세 작성 -->
                         <div class="form-group m-3">
-                            <label>Create a new category</label>
-                            <input name="category_new" type="text" placeholder="Create a new category"
+                            <label>방문 장소 상세명</label>
+                            <input required name="place_detail" type="text" placeholder="방문 장소를 상세히 입력해주세요"
                                 class="form-control">
                         </div>
 
-                        <!-- 여러 이미지 업로드 -->
+                        <!-- 증상 선택 -->
                         <div class="form-group m-3">
-                            <label>Upload image</label>
-                            <input required name="image" type="file" multiple class="form-control-file">
+                            <label>증상</label>
+                            <select required name="symptom" class="form-control">
+                                <option value='none'>증상을 선택해주세요</option>
+                                <!-- 증상 불러오기 -->
+                                {% for symptom in symptoms %}
+                                <option value='{{symptom.id}}'>{{symptom.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- 설명 작성 -->
+                        <div class="form-group m-3">
+                            <label>상세 증상</label>
+                            <textarea rows="4" required name="description" type="text" placeholder="증상을 상세히 입력해주세요"
+                                      class="form-control"></textarea>
+                        </div>
+
+
+<!--                        &lt;!&ndash; 카테고리 생성 &ndash;&gt;-->
+<!--                        <div class="form-group m-3">-->
+<!--                            <label>Create a new place</label>-->
+<!--                            <input name="place_new" type="text" placeholder="Create a new place"-->
+<!--                                class="form-control">-->
+<!--                        </div>-->
+
+                        <!-- 여러 이미지/영상 업로드 -->
+                        <div class="form-group m-3">
+                            <label>파일 선택</label>
+                            <input required name="file" type="file" multiple class="form-control-file">
                         </div>
 
                         <button type='submit' class="btn btn-primary m-3">Submit</button>

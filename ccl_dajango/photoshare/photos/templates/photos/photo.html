@@ -16,20 +16,43 @@
 <body class="m-5">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col">
+            <div class="col-lg-8">
 
                 <a href="{% url 'gallery' %}" class="btn btn-dark my-3">Go Back</a>
 
-                <div style="height: 90vh;">
-                    {% if gubun == 'mp4' %}
-                        <video style="max-width: 100%; max-height: 100%;" controls loop muted src="{{photo.image.url}}"></video>
-                    {% else %}
-                        <img style="max-width: 100%; max-height: 100%;" src="{{photo.image.url}}">
-                    {% endif %}
-                    <p>{{photo.description}}</p>
+                <article>
+                    <figure class="mb-4">
+                        {% if gubun == 'mp4' %}
+                            <video style="max-width: 100%; max-height: 100%;" controls loop muted src="{{file_info.file.url}}"></video>
+                        {% else %}
+                            <img style="max-width: 100%; max-height: 100%;" src="{{file_info.file.url}}">
+                        {% endif %}
+                    </figure>
+                    <section class="mb-5">
+                        <p class="fs-5 mb-4">{{file_info.description}}</p>
+                    </section>
+                </article>
+            </div>
+
+            <!-- Side widget-->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">방문 장소</div>
+                    <div class="card-body">{{file_info.place}}</div>
+                    <div class="card-body">{{file_info.place_detail}}</div>
                 </div>
 
+                <div class="card mb-4">
+                    <div class="card-header">증상</div>
+                    <div class="card-body">{{file_info.symptom}}</div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">등록 일자</div>
+                    <div class="card-body">{{file_info.create_at}}</div>
+                </div>
             </div>
+
         </div>
     </div>
 
