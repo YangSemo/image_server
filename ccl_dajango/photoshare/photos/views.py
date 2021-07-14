@@ -80,6 +80,7 @@ def addPhoto(request):
         # File_Info DB에 데이터 전송
         file_info = File_Info.objects.create(
             user = request.user,
+            visited_date = data['visited_date'],
             place = place,
             place_detail = data['place_detail'],
             symptom = symptom,
