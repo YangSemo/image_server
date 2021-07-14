@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from imagekit.models import ProcessedImageField
+
 # Create your models here.
+from pilkit.processors import ResizeToFill
+
+
 class Place(models.Model):
     class Meta:
         # 모델 객체의 이름을 관리자 화면으로 표시
@@ -33,7 +38,7 @@ class File_Info(models.Model):
     class Meta:
         verbose_name = 'File_Info'
         verbose_name_plural = 'File_Infos'
-
+    id = models.AutoField(primary_key=True) # 기본키
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)  # 사용자
     place = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True, blank=True) # 장소
@@ -42,7 +47,21 @@ class File_Info(models.Model):
     description = models.TextField() # 증상 설명
     create_at = models.DateTimeField(auto_now_add=True) # 등록 날짜 자동 부여
     visited_date = models.DateField(null=False, blank=False) # 방문 날짜
+
+    # File_Info를 참조할 때 보여주는 컬럼
+    def __str__(self):
+        # Text만 가능
+        return self.description
+
+# File_Info를 참조하여 여러 파일 담는 테이블 
+class File(models.Model):
+    file_info = models.ForeignKey(File_Info, blank=True, null=True, on_delete=models.CASCADE)
     file = models.FileField(null=False, blank=False)  # 파일
 
-    def __str__(self):
-        return self.description
+    # 영상은 아직 저장 고려 안함 => 이미지만 저장
+    # file = ProcessedImageField(
+    #     processors = [ResizeToFill(100, 80)], # 사이즈 조정
+    #     format = 'JPEG',                    # 최종 저장 포맷
+    #     options = {'quality': 60},
+    #     null=False
+    # )

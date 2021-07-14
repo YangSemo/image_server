@@ -72,7 +72,7 @@
                                 <!--  카테고리 불러오기    -->
                                 <small>방문 장소: {{file_info.place.name}}</small><br>
                                 <small>증상: {{file_info.symptom.name}}</small><br>
-                                <small>등록 날짜: {{file_info.create_at}}</small><br>
+                                <small>방문 날짜: {{file_info.visited_date}}</small><br>
                             </div>
                             <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->
                             <a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">View</a>
