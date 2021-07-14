@@ -41,6 +41,7 @@ class File_Info(models.Model):
     symptom = models.ForeignKey(Symptom, on_delete=models.SET_NULL, null=True, blank=True) # 증상
     description = models.TextField() # 증상 설명
     create_at = models.DateTimeField(auto_now_add=True) # 등록 날짜 자동 부여
+    visited_date = models.DateField(null=False, blank=False) # 방문 날짜
     file = models.FileField(null=False, blank=False)  # 파일
 
     def __str__(self):
