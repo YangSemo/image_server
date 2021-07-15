@@ -47,6 +47,7 @@ class File_Info(models.Model):
     description = models.TextField() # 증상 설명
     create_at = models.DateTimeField(auto_now_add=True) # 등록 날짜 자동 부여
     visited_date = models.DateField(null=False, blank=False) # 방문 날짜
+    thumbnail_img = models.ImageField(blank=True, null=True) # 썸네일 이미지
 
     # File_Info를 참조할 때 보여주는 컬럼
     def __str__(self):

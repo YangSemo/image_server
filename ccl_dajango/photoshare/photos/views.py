@@ -21,6 +21,10 @@ def gallery(request):
     # 카테고리 DB 전체 내용 가져오기
     places = Place.objects.all()
 
+    # 카테고리, 파일 딕셔너리 형식으로  생성
+    context = {'places': places, 'file_infos': file_infos}
+    return render(request, 'photos/gallery.html', context)
+
     # 영상을 이미지로 바꾸기
     # folder = 'C:/Users/SAMSUNG/CCLab_git/image_server/ccl_dajango/photoshare/static'
     # for photo in photos:
@@ -30,22 +34,35 @@ def gallery(request):
     # for file_info in file_infos:
     #     print("file_info: ", file_info.file.url)
 
-    # 딕셔너리 형식으로 카테고리, 포토 변환
-    context = {'places': places, 'file_infos': file_infos}
-    return render(request, 'photos/gallery.html', context)
-
 # 이미지 상세보기 view
 @login_required(login_url='login')
 def viewPhoto(request, pk):
     # file_info id 불러오기
     file_info = File_Info.objects.get(id=pk)
 
+    # File_Info의 ID를 기준으로 File 테이블의 file 추출을 위함
+    files = File.objects.filter(file_info_id=file_info.id)
+    print("file_info 이미지: ",file_info.thumbnail_img.url)
 
+    # gubuns = []  # 확장자를 담기 위함
 
-    # 이미지(png,jpg 등), 영상(mp4) 확장자 추출
-    gubun = file_info.file.url[file_info.file.url.find(".")+1:]
+    # 이미지(png,jpg 등), 영상(mp4) 확장자 추출 => 이미지 영상 구분을 위함
+    # for file in files:
+    #     gubun = file.file.url[file.file.url.find(".")+1:]
+    #     gubuns += gubun
 
-    context = {'file_info':file_info, 'gubun': gubun}
+        # photo.html => 이미지, 영상 구분을 위한 코드
+        # { % if gubuns[i] == 'mp4' %}
+        # < video style = "max-width: 100%; max-height: 100%;" controls loop muted src = "{{files[i].file.url}}" > < / video >
+        # {% else %}
+        # < img style = "max-width: 100%; max-height: 100%;" src = "{{file.file.url}}" >
+        # {% endif %}
+
+        # print('list: ', lists[0][1].file.url)
+    # len_gubuns= len(gubuns)
+
+    # context = {'file_info':file_info, 'gubuns': gubuns, 'files': files, 'len_gubuns': len_gubuns}
+    context = {'file_info':file_info, 'files': files}
     return render(request, 'photos/photo.html', context)
 
 # 이미지 추가 view
@@ -76,6 +93,8 @@ def addPhoto(request):
             place = None
             symptom = None
 
+        print('첫번째 이미지: ', request.FILES['file'])
+
         # File_Info DB에 데이터 전송
         File_Info.objects.create(
             user=request.user,
@@ -84,14 +103,18 @@ def addPhoto(request):
             place_detail=data['place_detail'],
             symptom=symptom,
             description=data['description'],
+            thumbnail_img=request.FILES['file'] # 마지막 선택 파일만 썸네일 이미지 저장
         )
 
-
+        # File_Info의 ID값을 File 테이블 외래키로 사용을 위함
+        file_info = File_Info.objects.order_by('id').last()
+        # print('file_info ID: ', file_info.id)
 
         # name 속성이 file input 태그로부터 받은 파일들을 반복문을 통해 하나씩 가져온다
         for file in request.FILES.getlist('file'):
             file_db = File() # File 객체 생성
             file_db.file = file # file 컬럼에 파일 저장
+            file_db.file_info_id = file_info.id # File_Info 외래키
             # print("file: ", file)
             file_db.save() # DB에 저장
 
