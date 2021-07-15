@@ -1,12 +1,10 @@
-import os
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .models import Place, File_Info, Symptom
+from .models import Place, File_Info, Symptom, File
 from .form import CustomUserCreationForm
 
-from thumb_gen.worker import Generator # 영상 썸네일
+# from thumb_gen.worker import Generator # 영상 썸네일
 # Create your views here.
 
 # 메인 페이지 view
@@ -29,8 +27,8 @@ def gallery(request):
     #     if photo.image.url.endswith('.mp4') or photo.image.url.endswith('.mkv'):
     #         app = Generator(os.path.join(folder, photo.image.url), output_path=folder, custom_text=False, font_size=25)
     #         app.run()
-    for file_info in file_infos:
-        print("file_info: ", file_info.file.url)
+    # for file_info in file_infos:
+    #     print("file_info: ", file_info.file.url)
 
     # 딕셔너리 형식으로 카테고리, 포토 변환
     context = {'places': places, 'file_infos': file_infos}
@@ -41,6 +39,8 @@ def gallery(request):
 def viewPhoto(request, pk):
     # file_info id 불러오기
     file_info = File_Info.objects.get(id=pk)
+
+
 
     # 이미지(png,jpg 등), 영상(mp4) 확장자 추출
     gubun = file_info.file.url[file_info.file.url.find(".")+1:]
@@ -58,7 +58,6 @@ def addPhoto(request):
     # requset가 Post일 때
     if request.method == 'POST':
         data = request.POST # Post 방식의 data 객체
-        file = request.FILES.get('file') # 업로드한 이미지 가져오기
 
         # 방문 장소 가져오기
         if data['place'] != 'none':
@@ -78,15 +77,24 @@ def addPhoto(request):
             symptom = None
 
         # File_Info DB에 데이터 전송
-        file_info = File_Info.objects.create(
-            user = request.user,
-            visited_date = data['visited_date'],
-            place = place,
-            place_detail = data['place_detail'],
-            symptom = symptom,
-            description = data['description'],
-            file = file,
+        File_Info.objects.create(
+            user=request.user,
+            visited_date=data['visited_date'],
+            place=place,
+            place_detail=data['place_detail'],
+            symptom=symptom,
+            description=data['description'],
         )
+
+
+
+        # name 속성이 file input 태그로부터 받은 파일들을 반복문을 통해 하나씩 가져온다
+        for file in request.FILES.getlist('file'):
+            file_db = File() # File 객체 생성
+            file_db.file = file # file 컬럼에 파일 저장
+            # print("file: ", file)
+            file_db.save() # DB에 저장
+
         # gallery.html로 이동
         return redirect('gallery')
 
