@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .models import Place, File_Info, Symptom, File
+from .models import Place, File_Info, Symptom, File, File_Kind
 from .form import CustomUserCreationForm
 
 # from thumb_gen.worker import Generator # 영상 썸네일
@@ -16,7 +16,7 @@ def gallery(request):
         file_infos = File_Info.objects.all()
     else:
         # 카테고리에 해당되는 포토만 가져오기
-        file_infos = File_Info.objects.filter(category__name=place)
+        file_infos = File_Info.objects.filter(place__name=place)
 
     # 카테고리 DB 전체 내용 가져오기
     places = Place.objects.all()
@@ -68,9 +68,10 @@ def viewPhoto(request, pk):
 # 이미지 추가 view
 @login_required(login_url='login')
 def addPhoto(request):
-    # 카테고리 DB 내용 가져오기
+    # DB 내용 가져오기
     places = Place.objects.all()
     symptoms = Symptom.objects.all()
+    file_kinds = File_Kind.objects.all()
 
     # requset가 Post일 때
     if request.method == 'POST':
@@ -84,6 +85,8 @@ def addPhoto(request):
         if data['symptom'] != 'none':
             symptom = Symptom.objects.get(id=data['symptom'])
 
+
+
         # 카테고리 가져오거나 생성
         # elif data['place_new'] != '':
         #     place, created = Place.objects.get_or_create(name=data['place_new'])
@@ -93,7 +96,7 @@ def addPhoto(request):
             place = None
             symptom = None
 
-        print('첫번째 이미지: ', request.FILES['file'])
+        # print('첫번째 이미지: ', request.FILES['file'])
 
         # File_Info DB에 데이터 전송
         File_Info.objects.create(
@@ -106,22 +109,37 @@ def addPhoto(request):
             thumbnail_img=request.FILES['file'] # 마지막 선택 파일만 썸네일 이미지 저장
         )
 
-        # File_Info의 ID값을 File 테이블 외래키로 사용을 위함
+        # File_Info의 ID값을 File 테이블 외래키로 사용을 위함 => 최신 등록 id가 제일 크므로 last() 사용
         file_info = File_Info.objects.order_by('id').last()
         # print('file_info ID: ', file_info.id)
 
+        i = 0  # file_names 접근 인덱스
+
         # name 속성이 file input 태그로부터 받은 파일들을 반복문을 통해 하나씩 가져온다
         for file in request.FILES.getlist('file'):
+
+            # 여러 개의 file_name 가져오기
+            file_names = request.POST.getlist('file_name')
+
             file_db = File() # File 객체 생성
             file_db.file = file # file 컬럼에 파일 저장
+            # 파일 종류 가져오기
+            if data['file_name'] != 'none':
+                file_name = File_Kind.objects.get(name=file_names[i])
+                # print("file_name: ", file_name)
+                i += 1  # file_names 배열 인덱스 +1
+                file_db.file_kind = file_name
+
             file_db.file_info_id = file_info.id # File_Info 외래키
             # print("file: ", file)
             file_db.save() # DB에 저장
 
+
+
         # gallery.html로 이동
         return redirect('gallery')
 
-    context = {'places': places, 'symptoms':symptoms}
+    context = {'places': places, 'symptoms':symptoms, 'file_kinds' : file_kinds}
     return render(request, 'photos/add.html', context)
 
 # 로그인 view

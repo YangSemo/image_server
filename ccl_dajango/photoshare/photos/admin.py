@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Place, File_Info,Symptom, File
+from .models import Place, File_Info,Symptom, File, File_Kind
 # 관리자 페이지에 추가
 
 # Photo 클래스를 inline으로 나타낸다
@@ -20,11 +20,12 @@ class File_Info_Admin(admin.ModelAdmin):
     inlines = [FileInline,]
 
 class File_Admin(admin.ModelAdmin):
-    list_display = ('id','file','file_info_id')
+    list_display = ('id','file','file_kind','file_info_id')
 
 
 admin.site.register(File_Info, File_Info_Admin)
 admin.site.register(Place)
 admin.site.register(Symptom)
+admin.site.register(File_Kind)
 admin.site.register(File,File_Admin)
 
