@@ -10,7 +10,7 @@ class FileInline(admin.TabularInline):
 
 class File_Info_Admin(admin.ModelAdmin):
     # 관리자 페이지에 보여주기
-    list_display = ('id','user','place','visited_date','place_detail','symptom','description','create_at')
+    list_display = ('id','user','place','visited_date','place_detail','symptom','description','create_at','thumbnail_img')
     # 이 순서대로
     ordering = ('-visited_date',)
     # 검색 가능 => 현재 오류 남

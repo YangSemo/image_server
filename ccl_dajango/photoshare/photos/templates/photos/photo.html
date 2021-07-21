@@ -22,12 +22,12 @@
 
                 <article>
                     <figure class="mb-4">
-                        {% for  %}
-                        {% if gubun == 'mp4' %}
-                            <video style="max-width: 100%; max-height: 100%;" controls loop muted src="{{file_info.file.url}}"></video>
-                        {% else %}
-                            <img style="max-width: 100%; max-height: 100%;" src="{{file_info.file.url}}">
-                        {% endif %}
+                        {% for file in files %}
+                            <img style="max-width: 100%; max-height: 100%;" src="{{file.file.url}}"><br>
+                        <!--  이미지 없을 경우  -->
+                        {% empty %}
+                            <h3>No photos...</h3>
+                        {% endfor %}
                     </figure>
                     <section class="mb-5">
                         <p class="fs-5 mb-4">{{file_info.description}}</p>
