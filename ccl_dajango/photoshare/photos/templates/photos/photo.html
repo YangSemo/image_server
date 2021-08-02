@@ -54,6 +54,13 @@
                 </div>
 
                 <div class="card mb-4">
+                    <div class="card-header">파일 종류</div>
+                    {% for file in files %}
+                        <div class="card-body">{{file.file_kind}}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="card mb-4">
                     <div class="card-header">등록 일자</div>
                     <div class="card-body">{{file_info.create_at}}</div>
                 </div>

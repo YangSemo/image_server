@@ -24,7 +24,7 @@
 
         <div class="row justify-content-center">
             <!--go back 버튼 클릭 시 gallery html로 이등-->
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <a href="{% url 'gallery' %}" class="btn btn-dark my-3">Go Back</a>
                 <!--  card 형식으로 post 전송 -->
                 <div class="card">
@@ -34,15 +34,6 @@
 
                         <!--  방문 날짜 설정  -->
                         <div class="form-group m-3">
-<!--                            <div class="form-group">-->
-<!--                                <div class="input-group date" id="datetimepicker4" data-target-input="nearest">-->
-<!--                                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker4" value="방문 날짜를 선택해주세요.">-->
-<!--                                    <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datepicker">-->
-<!--                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
                             <div class="form-group">
                                 <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
                                     <input required name="visited_date" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker4" placeholder="방문 날짜를 선택해주세요.">
@@ -56,10 +47,8 @@
                                             format: 'YYYY-MM-DD'
                                         });
                                     });
-
                                 </script>
                             </div>
-
                         </div>
 
 
@@ -112,8 +101,27 @@
 
                         <!-- 여러 이미지/영상 업로드 -->
                         <div class="form-group m-3">
-                            <label>파일 선택</label>
-                            <input required name="file" type="file" multiple class="form-control-file">
+                            <button type="button" id="btnAdd">파일 추가</button> <span></span>
+                            <label>이미지/영상 파일을 업로드 해주세요</label>
+                            <br><br>
+
+                            <div id="file_form">
+
+                            </div>
+
+                            <script type="text/javascript">
+                                $('#btnAdd').click(function() {
+                                    $('#file_form').append (
+                                        '<input name="file" type="file">\
+                                        <select name="file_name">\
+                                            {% for file_kind in file_kinds %}\
+                                            <option>{{file_kind.name}}</option>\
+                                            {% endfor %}\
+                                        </select>'
+                                    );
+                                });
+                            </script>
+
                         </div>
 
                         <button type='submit' class="btn btn-primary m-3">Submit</button>
