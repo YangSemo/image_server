@@ -13,10 +13,10 @@ def gallery(request):
     place = request.GET.get('place')
     if place == None:
         # 포토 DB 전체 가져오기
-        file_infos = File_Info.objects.all()
+        file_infos = File_Info.objects.all().order_by('visited_date')
     else:
         # 카테고리에 해당되는 포토만 가져오기
-        file_infos = File_Info.objects.filter(place__name=place)
+        file_infos = File_Info.objects.filter(place__name=place).order_by('visited_date')
 
     # 카테고리 DB 전체 내용 가져오기
     places = Place.objects.all()
@@ -117,24 +117,27 @@ def addPhoto(request):
 
         # name 속성이 file input 태그로부터 받은 파일들을 반복문을 통해 하나씩 가져온다
         for file in request.FILES.getlist('file'):
-
             # 여러 개의 file_name 가져오기
             file_names = request.POST.getlist('file_name')
 
+            # '파일 종류 미선택 항목 제거"
+            for file_name in file_names:
+                if file_name=='파일종류 선택':
+                    file_names.remove(file_name)
+
             file_db = File() # File 객체 생성
             file_db.file = file # file 컬럼에 파일 저장
+
             # 파일 종류 가져오기
-            if data['file_name'] != 'none':
-                file_name = File_Kind.objects.get(name=file_names[i])
-                # print("file_name: ", file_name)
-                i += 1  # file_names 배열 인덱스 +1
-                file_db.file_kind = file_name
+            file_name = File_Kind.objects.get(name=file_names[i])
+            i += 1  # file_names 배열 인덱스 +1
+            file_db.file_kind = file_name
+
+            # print("file_kind: ", file_name)
 
             file_db.file_info_id = file_info.id # File_Info 외래키
             # print("file: ", file)
             file_db.save() # DB에 저장
-
-
 
         # gallery.html로 이동
         return redirect('gallery')

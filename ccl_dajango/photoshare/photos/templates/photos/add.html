@@ -109,11 +109,13 @@
 
                             </div>
 
+                            <!-- 파일 추가 생성 및 파일종류 설정 -->
                             <script type="text/javascript">
                                 $('#btnAdd').click(function() {
                                     $('#file_form').append (
                                         '<input name="file" type="file">\
                                         <select name="file_name">\
+                                            <option>파일종류 선택</option>\
                                             {% for file_kind in file_kinds %}\
                                             <option>{{file_kind.name}}</option>\
                                             {% endfor %}\
