@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from imagekit.models import ProcessedImageField
+# from imagekit.models import ProcessedImageField
 
 # Create your models here.
-from pilkit.processors import ResizeToFill
+# from pilkit.processors import ResizeToFill
 
 # 장소
 class Place(models.Model):

@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
     <style>
         .image-thumbail {
             height: 200px;
@@ -25,8 +27,7 @@
 </head>
 
 <body class="m-5">
-
-    <div class="container">
+ <div class="container">
         <div class="row">
             <div class="col-md-3">
                 <!--  회원 확인   -->
@@ -36,53 +37,123 @@
 
                 <div class="card">
                     <div class="card-header">
-                        방문 장소
+                        <select id="category" name="category" class="form-control">
+                            <option value='none'>카테고리를 선택해주세요</option>
+                            <option value='place'>방문 장소</option>
+                            <option value='symptom'>증상</option>
+                        </select>
                     </div>
+
+                    <script type="text/javascript">
+                        $("select[name=category]").change(function(){
+                            console.log("hhh")
+                            $('#sel_category').empty()
+                            if($("#category").val()=="place"){
+                                $('#sel_category').append (
+                                    '<!--    방문 장소    -->\
+                                    {% for place in places %}\
+                                    <li class=" list-group-item">\
+                                        <a href="{% url 'gallery' %}?place={{place.name}}">\
+                                            {{place.name}}\
+                                        </a>\
+                                    </li>\
+                                    {% endfor %}'
+                                );
+                            }
+                            else if($("#category").val()=="symptom"){
+                                $('#sel_category').append (
+                                    '<!--    증상    -->\
+                                    {% for symptom in symptoms %}\
+                                    <li class=" list-group-item">\
+                                        <a href="{% url 'gallery' %}?symptom={{symptom.name}}">\
+                                            {{symptom.name}}\
+                                        </a>\
+                                    </li>\
+                                    {% endfor %}'
+                                );
+                            }
+                        });
+
+                    </script>
+
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <a href="{% url 'gallery' %}">All</a>
                         </li>
-                        <!--    방문 장소    -->
-                        {% for place in places %}
-                        <li class=" list-group-item">
-                            <a href="{% url 'gallery' %}?place={{place.name}}">
-                                {{place.name}}
-                            </a>
-                        </li>
-                        {% endfor %}
+
+                        <div id="sel_category">
+
+                        </div>
 
                         <!--  'add' url로 이동  -->
                         <a href="{% url 'add' %}" class="btn btn-dark btn-block btn-sm m-1">Add File</a>
                         <!--  'logout' url로 이동  -->
                         <a href="{% url 'logout' %}" class="btn btn-dark btn-block btn-sm m-1">Logout</a>
+
+                        <div class="form-check">
+                          <input value="thumbnail" name="radio" class="form-check-input" type="radio" id="flexRadioDefault1" checked>
+                          <label class="form-check-label" for="flexRadioDefault1">
+                            Thumbnail 형식
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input value="list" name="radio" class="form-check-input" type="radio" id="flexRadioDefault2" >
+                          <label class="form-check-label" for="flexRadioDefault2">
+                            List 형식
+                          </label>
+                        </div>
+
                     </ul>
                 </div>
+
+                <script type="text/javascript">
+                            $("input:radio[name=radio]").click(function(){
+                                console.log("hi");
+                                var check = $("input:radio[name=radio]:checked").val();
+                                console.log(check)
+                                if(check=="thumbnail"){
+                                    console.log(check);
+                                    $("#thumbnail1").append(
+                                        '{% for file_info in file_infos %}\
+                                                <!--    카드 형식으로 이미지 url 불러오기     -->\
+                                                    <img class="image-thumbail" src="{{file_info.thumbnail_img.url}}" alt="Card image cap">\
+
+                                                    <div class="card-body">\
+                                                        <!--  카테고리 불러오기    -->\
+                                                        <small>방문 장소: {{file_info.place.name}}</small><br>\
+                                                        <small>증상: {{file_info.symptom.name}}</small><br>\
+                                                        <small>방문 날짜: {{file_info.visited_date}}</small><br>\
+                                                    </div>\
+                                                    <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->\
+                                                    <a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">View</a>\
+                                                </div>\
+                                            </div>\
+                                            <!--  이미지 없을 경우  -->\
+                                            {% empty %}\
+                                                <h3>No photos...</h3>\
+                                            {% endfor %}'
+                                    );
+                                }
+                            });
+
+                </script>
 
             </div>
             <!--  이미지 썸네일   -->
             <div class="col-md-9">
-                <div class="row">
-                    <!-- 이미지 불러오기   -->
-                    {% for file_info in file_infos %}
+                <div class="row" id="view_table">
                     <div class="col-md-4">
-                        <div class="card my-2">
+                        <div class="card my-2" id="thumbnail1">
                             <!--    카드 형식으로 이미지 url 불러오기     -->
-                            <img class="image-thumbail" src="{{file_info.thumbnail_img.url}}" alt="Card image cap">
 
-                            <div class="card-body">
+                            <div class="card-body" id="thumbnail2">
                                 <!--  카테고리 불러오기    -->
-                                <small>방문 장소: {{file_info.place.name}}</small><br>
-                                <small>증상: {{file_info.symptom.name}}</small><br>
-                                <small>방문 날짜: {{file_info.visited_date}}</small><br>
+
                             </div>
                             <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->
-                            <a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">View</a>
+
                         </div>
                     </div>
-                    <!--  이미지 없을 경우  -->
-                    {% empty %}
-                        <h3>No photos...</h3>
-                    {% endfor %}
 
                 </div>
             </div>

@@ -10,19 +10,30 @@ from .form import CustomUserCreationForm
 # 메인 페이지 view
 @login_required(login_url='login')
 def gallery(request):
+    # 방문장소/증상필터링
     place = request.GET.get('place')
-    if place == None:
-        # 포토 DB 전체 가져오기
-        file_infos = File_Info.objects.all().order_by('visited_date')
-    else:
+    symptom = request.GET.get('symptom')
+
+    if place != None:
         # 카테고리에 해당되는 포토만 가져오기
         file_infos = File_Info.objects.filter(place__name=place).order_by('visited_date')
+    elif symptom != None:
+        # 카테고리에 해당되는 포토만 가져오기
+        file_infos = File_Info.objects.filter(symptom__name=symptom).order_by('visited_date')
+        print("symptom: ", file_infos)
+    else:
+        # 포토 DB 전체 가져오기
+        file_infos = File_Info.objects.all().order_by('visited_date')
 
     # 카테고리 DB 전체 내용 가져오기
     places = Place.objects.all()
+    symptoms = Symptom.objects.all()
+    file_kinds = File_Kind.objects.all()
+
+
 
     # 카테고리, 파일 딕셔너리 형식으로  생성
-    context = {'places': places, 'file_infos': file_infos}
+    context = {'places': places, 'symptoms':symptoms, 'file_kinds':file_kinds,'file_infos': file_infos}
     return render(request, 'photos/gallery.html', context)
 
     # 영상을 이미지로 바꾸기
