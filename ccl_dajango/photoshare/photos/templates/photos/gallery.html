@@ -111,13 +111,16 @@
                                 console.log("hi");
                                 var check = $("input:radio[name=radio]:checked").val();
                                 console.log(check)
+                                $("#view").empty();
                                 if(check=="thumbnail"){
                                     console.log(check);
-                                    $("#thumbnail1").append(
-                                        '{% for file_info in file_infos %}\
-                                                <!--    카드 형식으로 이미지 url 불러오기     -->\
-                                                    <img class="image-thumbail" src="{{file_info.thumbnail_img.url}}" alt="Card image cap">\
-
+                                    $("#view").append(
+                                        '{% for file_info in file_infos %}' +
+                                        '<div class="col-md-4">' +
+                                            '<!-- 이미지 불러오기   -->' +
+                                                '<div class="card my-2">' +
+                                                    '<!--    카드 형식으로 이미지 url 불러오기     -->' +
+                                                    '<img class="image-thumbail" src="{{file_info.thumbnail_img.url}}" alt="Card image cap">\
                                                     <div class="card-body">\
                                                         <!--  카테고리 불러오기    -->\
                                                         <small>방문 장소: {{file_info.place.name}}</small><br>\
@@ -127,36 +130,83 @@
                                                     <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->\
                                                     <a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">View</a>\
                                                 </div>\
-                                            </div>\
-                                            <!--  이미지 없을 경우  -->\
-                                            {% empty %}\
-                                                <h3>No photos...</h3>\
-                                            {% endfor %}'
+                                        </div>\
+                                        <!--  이미지 없을 경우  -->\
+                                        {% empty %}\
+                                            <h3>No photos...</h3>\
+                                        {% endfor %}'
                                     );
                                 }
+                                else if(check=="list"){
+                                    console.log(check);
+                                    $("#view").append(
+                                        '<div class="card-body">' +
+                                            '<table class="table table-striped" style="width:100%">\
+                                                <thead>\
+                                                    <tr>\
+                                                        <th>ID</th>\
+                                                        <th>사용자</th>\
+                                                        <th>방문 장소</th>\
+                                                        <th>방문 일자</th>\
+                                                        <th>구체적 방문 장소</th>\
+                                                        <th>증상</th>\
+                                                        <th>증상 설명</th>\
+                                                        <th>생성 일자</th>\
+                                                    </tr>\
+                                                </thead>\
+                                                {% for file_info in file_infos %}\
+                                                <tbody>\
+                                                    <tr>\
+                                                        <td><a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">{{file_info.id}}</a></td>\
+                                                        <td>{{file_info.user}}</td>\
+                                                        <td>{{file_info.place.name}}</td>\
+                                                        <td>{{file_info.visited_date}}</td>\
+                                                        <td>{{file_info.place_detail}}</td>\
+                                                        <td>{{file_info.symptom.name}}</td>\
+                                                        <td>{{file_info.description}}</td>\
+                                                        <td>{{file_info.create_at}}</td>\
+                                                    </tr>\
+                                                </tbody>\
+                                                <!--  이미지 없을 경우  -->\
+                                                {% empty %}\
+                                                    <h3>No photos...</h3>\
+                                                {% endfor %}\
+                                            </table>\
+                                        </div>'
+                                    )
+                                }
                             });
-
                 </script>
-
             </div>
+
+            <!--  초기 화면  -->
             <!--  이미지 썸네일   -->
             <div class="col-md-9">
-                <div class="row" id="view_table">
+                <div class="row" id="view">
+                    {% for file_info in file_infos %}
                     <div class="col-md-4">
-                        <div class="card my-2" id="thumbnail1">
-                            <!--    카드 형식으로 이미지 url 불러오기     -->
+                        <!-- 이미지 불러오기   -->
+                            <div class="card my-2">
+                                <!--    카드 형식으로 이미지 url 불러오기     -->
+                                <img class="image-thumbail" src="{{file_info.thumbnail_img.url}}" alt="Card image cap">
 
-                            <div class="card-body" id="thumbnail2">
-                                <!--  카테고리 불러오기    -->
-
+                                <div class="card-body">
+                                    <!--  카테고리 불러오기    -->
+                                    <small>방문 장소: {{file_info.place.name}}</small><br>
+                                    <small>증상: {{file_info.symptom.name}}</small><br>
+                                    <small>방문 날짜: {{file_info.visited_date}}</small><br>
+                                </div>
+                                <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->
+                                <a href="{% url 'photo' file_info.id %}" class="btn btn-outline-dark btn-sm m-1">View</a>
                             </div>
-                            <!--   View 버튼 클릭 시 file_info id에 해당하는 페이지로 변경    -->
-
-                        </div>
                     </div>
-
+                    <!--  이미지 없을 경우  -->
+                    {% empty %}
+                        <h3>No photos...</h3>
+                    {% endfor %}
                 </div>
             </div>
+
         </div>
     </div>
 

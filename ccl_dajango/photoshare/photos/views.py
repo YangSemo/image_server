@@ -54,6 +54,8 @@ def viewPhoto(request, pk):
     # File_Info의 ID를 기준으로 File 테이블의 file 추출을 위함
     files = File.objects.filter(file_info_id=file_info.id)
     print("file_info 이미지: ",file_info.thumbnail_img.url)
+    for file in files:
+        print("files: ", file.file.url)
 
     # gubuns = []  # 확장자를 담기 위함
 
